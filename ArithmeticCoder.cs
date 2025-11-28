@@ -44,11 +44,10 @@ public class ArithmeticCoder
         using var outputStream = new MemoryStream();
         using var writer = new BinaryWriter(outputStream);
 
-        // Записываем размер оригинальных данных
         writer.Write(input.Length);
 
-        // Записываем статистику символов
         writer.Write(stats.Frequencies.Count);
+
         foreach (var pair in stats.Frequencies)
         {
             writer.Write(pair.Key);
@@ -96,16 +95,13 @@ public class ArithmeticCoder
                     high -= QUARTER_RANGE;
                 }
                 else
-                {
                     break;
-                }
 
                 low <<= 1;
                 high = (high << 1) | 1;
             }
         }
 
-        // Завершаем кодирование
         underflow++;
         if (low < QUARTER_RANGE)
         {
@@ -166,7 +162,6 @@ public class ArithmeticCoder
             var range = high - low + 1;
             var scaledValue = ((value - low + 1) * stats.Total - 1) / range;
 
-            // Находим символ по scaledValue
             byte symbol = FindSymbol(stats, scaledValue);
             output.Add(symbol);
 
@@ -178,7 +173,7 @@ public class ArithmeticCoder
             {
                 if (high < HALF_RANGE)
                 {
-                    // Ничего не делаем
+                    // Do nothing
                 }
                 else if (low >= HALF_RANGE)
                 {
@@ -193,9 +188,7 @@ public class ArithmeticCoder
                     high -= QUARTER_RANGE;
                 }
                 else
-                {
                     break;
-                }
 
                 low <<= 1;
                 high = (high << 1) | 1;
@@ -216,17 +209,6 @@ public class ArithmeticCoder
                 stats.Frequencies[b] = 0;
             stats.Frequencies[b]++;
             stats.Total++;
-        }
-
-        // Гарантируем, что все символы имеют хотя бы частоту 1
-        for (int i = 0; i < 256; i++)
-        {
-            byte symbol = (byte)i;
-            if (!stats.Frequencies.ContainsKey(symbol))
-            {
-                stats.Frequencies[symbol] = 1;
-                stats.Total++;
-            }
         }
 
         return stats;
@@ -252,8 +234,6 @@ public class ArithmeticCoder
         throw new InvalidOperationException("Symbol not found");
     }
 
-    // Вспомогательные методы для работы с битами
-    private static byte currentBit;
     private static int bitPosition;
     private static byte bitBuffer;
 
