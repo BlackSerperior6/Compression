@@ -14,12 +14,9 @@ public static class LZWCompressor
         using (FileStream fs = new FileStream(outputFile, FileMode.Create))
         using (BinaryWriter writer = new BinaryWriter(fs))
         {
-            // Initialize dictionary with all possible bytes
             Dictionary<List<byte>, int> dictionary = new Dictionary<List<byte>, int>(new ByteListComparer());
             for (int i = 0; i < 256; i++)
-            {
                 dictionary[new List<byte> { (byte)i }] = i;
-            }
 
             List<byte> current = new List<byte>();
             List<int> output = new List<int>();

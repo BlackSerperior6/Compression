@@ -21,7 +21,6 @@
             btnSelectFile = new Button();
             btnCompressArithmetic = new Button();
             btnCompressLZW = new Button();
-            btnDoubleCompress = new Button();
             label1 = new Label();
             btnDecompressArithmetic = new Button();
             btnDecompressLZW = new Button();
@@ -43,7 +42,7 @@
             btnSelectFile.Name = "btnSelectFile";
             btnSelectFile.Size = new Size(88, 27);
             btnSelectFile.TabIndex = 1;
-            btnSelectFile.Text = "Browse";
+            btnSelectFile.Text = "Файл";
             btnSelectFile.UseVisualStyleBackColor = true;
             btnSelectFile.Click += btnSelectFile_Click;
             // 
@@ -54,31 +53,20 @@
             btnCompressArithmetic.Name = "btnCompressArithmetic";
             btnCompressArithmetic.Size = new Size(163, 40);
             btnCompressArithmetic.TabIndex = 2;
-            btnCompressArithmetic.Text = "Arithmetic Compression";
+            btnCompressArithmetic.Text = "Арифметическое кодирование";
             btnCompressArithmetic.UseVisualStyleBackColor = true;
             btnCompressArithmetic.Click += btnCompressArithmetic_Click;
             // 
             // btnCompressLZW
             // 
-            btnCompressLZW.Location = new Point(184, 92);
+            btnCompressLZW.Location = new Point(375, 92);
             btnCompressLZW.Margin = new Padding(4, 3, 4, 3);
             btnCompressLZW.Name = "btnCompressLZW";
             btnCompressLZW.Size = new Size(163, 40);
             btnCompressLZW.TabIndex = 3;
-            btnCompressLZW.Text = "LZW Compression";
+            btnCompressLZW.Text = "ЛЗВ Сжатие";
             btnCompressLZW.UseVisualStyleBackColor = true;
             btnCompressLZW.Click += btnCompressLZW_Click;
-            // 
-            // btnDoubleCompress
-            // 
-            btnDoubleCompress.Location = new Point(355, 92);
-            btnDoubleCompress.Margin = new Padding(4, 3, 4, 3);
-            btnDoubleCompress.Name = "btnDoubleCompress";
-            btnDoubleCompress.Size = new Size(174, 40);
-            btnDoubleCompress.TabIndex = 4;
-            btnDoubleCompress.Text = "Double Compression (AC+LZW)";
-            btnDoubleCompress.UseVisualStyleBackColor = true;
-            btnDoubleCompress.Click += btnDoubleCompress_Click;
             // 
             // label1
             // 
@@ -86,9 +74,9 @@
             label1.Location = new Point(14, 29);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(28, 15);
+            label1.Size = new Size(33, 15);
             label1.TabIndex = 5;
-            label1.Text = "File:";
+            label1.Text = "Путь";
             // 
             // btnDecompressArithmetic
             // 
@@ -97,17 +85,17 @@
             btnDecompressArithmetic.Name = "btnDecompressArithmetic";
             btnDecompressArithmetic.Size = new Size(163, 40);
             btnDecompressArithmetic.TabIndex = 6;
-            btnDecompressArithmetic.Text = "Arithemtic Decompression";
+            btnDecompressArithmetic.Text = "Арифметическое декодирование";
             btnDecompressArithmetic.UseVisualStyleBackColor = true;
             btnDecompressArithmetic.Click += btnDecompression_Click;
             // 
             // btnDecompressLZW
             // 
-            btnDecompressLZW.Location = new Point(184, 149);
+            btnDecompressLZW.Location = new Point(375, 149);
             btnDecompressLZW.Name = "btnDecompressLZW";
             btnDecompressLZW.Size = new Size(163, 40);
             btnDecompressLZW.TabIndex = 7;
-            btnDecompressLZW.Text = "LZW Decompression";
+            btnDecompressLZW.Text = "ЛЗВ Разжатие";
             btnDecompressLZW.UseVisualStyleBackColor = true;
             btnDecompressLZW.Click += btnDecompressLZW_Click;
             // 
@@ -119,7 +107,6 @@
             Controls.Add(btnDecompressLZW);
             Controls.Add(btnDecompressArithmetic);
             Controls.Add(label1);
-            Controls.Add(btnDoubleCompress);
             Controls.Add(btnCompressLZW);
             Controls.Add(btnCompressArithmetic);
             Controls.Add(btnSelectFile);
@@ -140,7 +127,6 @@
         private System.Windows.Forms.Button btnSelectFile;
         private System.Windows.Forms.Button btnCompressArithmetic;
         private System.Windows.Forms.Button btnCompressLZW;
-        private System.Windows.Forms.Button btnDoubleCompress;
         private System.Windows.Forms.Label label1;
         private Button btnDecompressArithmetic;
         private Button btnDecompressLZW;
