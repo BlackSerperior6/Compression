@@ -34,7 +34,7 @@ public static class LZWCompressor
                 {
                     output.Add(dictionary[current]);
 
-                    if (nextCode < 4096) // Limit dictionary size
+                    if (nextCode < 4096)
                     {
                         dictionary[extended] = nextCode++;
                     }
@@ -48,7 +48,6 @@ public static class LZWCompressor
                 output.Add(dictionary[current]);
             }
 
-            // Write compressed data
             writer.Write(output.Count);
             foreach (int code in output)
             {
@@ -66,7 +65,6 @@ public static class LZWCompressor
         {
             int codeCount = reader.ReadInt32();
 
-            // Initialize dictionary
             Dictionary<int, List<byte>> dictionary = new Dictionary<int, List<byte>>();
             for (int i = 0; i < 256; i++)
             {
@@ -94,7 +92,6 @@ public static class LZWCompressor
                 }
                 else if (code == nextCode)
                 {
-                    // Special case: code not in dictionary yet
                     current = [.. previous, previous[0]];
                 }
                 else
@@ -102,10 +99,8 @@ public static class LZWCompressor
                     throw new InvalidDataException($"Invalid LZW code: {code}");
                 }
 
-                // Write decompressed data
                 writer.Write(current.ToArray());
 
-                // Add new entry to dictionary
                 if (nextCode < MAX_DICT_SIZE)
                 {
                     List<byte> newEntry = new List<byte>(previous);
