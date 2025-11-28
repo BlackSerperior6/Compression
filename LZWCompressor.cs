@@ -35,9 +35,7 @@ public static class LZWCompressor
                     output.Add(dictionary[current]);
 
                     if (nextCode < 4096)
-                    {
                         dictionary[extended] = nextCode++;
-                    }
 
                     current = new List<byte> { b };
                 }
@@ -51,7 +49,7 @@ public static class LZWCompressor
             writer.Write(output.Count);
             foreach (int code in output)
             {
-                writer.Write((ushort)code); // Using 2 bytes per code
+                writer.Write((ushort)code);
             }
         }
     }
