@@ -2,86 +2,147 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
-namespace FileCompressionApp
+public static class LZWCompressor
 {
-    public class LZWCompressor
+    private const int MAX_DICT_SIZE = 4096;
+    public static void Compress(string inputFile, string outputFile)
     {
-        public void Compress(string inputFile, string outputFile)
+        byte[] inputData = File.ReadAllBytes(inputFile);
+
+        using (FileStream fs = new FileStream(outputFile, FileMode.Create))
+        using (BinaryWriter writer = new BinaryWriter(fs))
         {
-            byte[] inputData = File.ReadAllBytes(inputFile);
-
-            using (FileStream fs = new FileStream(outputFile, FileMode.Create))
-            using (BinaryWriter writer = new BinaryWriter(fs))
+            // Initialize dictionary with all possible bytes
+            Dictionary<List<byte>, int> dictionary = new Dictionary<List<byte>, int>(new ByteListComparer());
+            for (int i = 0; i < 256; i++)
             {
-                // Initialize dictionary with all possible bytes
-                Dictionary<List<byte>, int> dictionary = new Dictionary<List<byte>, int>(new ByteListComparer());
-                for (int i = 0; i < 256; i++)
+                dictionary[new List<byte> { (byte)i }] = i;
+            }
+
+            List<byte> current = new List<byte>();
+            List<int> output = new List<int>();
+            int nextCode = 256;
+
+            foreach (byte b in inputData)
+            {
+                List<byte> extended = new List<byte>(current) { b };
+
+                if (dictionary.ContainsKey(extended))
                 {
-                    dictionary[new List<byte> { (byte)i }] = i;
+                    current = extended;
                 }
-
-                List<byte> current = new List<byte>();
-                List<int> output = new List<int>();
-                int nextCode = 256;
-
-                foreach (byte b in inputData)
-                {
-                    List<byte> extended = new List<byte>(current) { b };
-
-                    if (dictionary.ContainsKey(extended))
-                    {
-                        current = extended;
-                    }
-                    else
-                    {
-                        output.Add(dictionary[current]);
-
-                        if (nextCode < 4096) // Limit dictionary size
-                        {
-                            dictionary[extended] = nextCode++;
-                        }
-
-                        current = new List<byte> { b };
-                    }
-                }
-
-                if (current.Count > 0)
+                else
                 {
                     output.Add(dictionary[current]);
-                }
 
-                // Write compressed data
-                writer.Write(output.Count);
-                foreach (int code in output)
-                {
-                    writer.Write((ushort)code); // Using 2 bytes per code
+                    if (nextCode < 4096) // Limit dictionary size
+                    {
+                        dictionary[extended] = nextCode++;
+                    }
+
+                    current = new List<byte> { b };
                 }
+            }
+
+            if (current.Count > 0)
+            {
+                output.Add(dictionary[current]);
+            }
+
+            // Write compressed data
+            writer.Write(output.Count);
+            foreach (int code in output)
+            {
+                writer.Write((ushort)code); // Using 2 bytes per code
             }
         }
+    }
 
-        private class ByteListComparer : IEqualityComparer<List<byte>>
+    public static void Decompress(string inputFile, string outputFile)
+    {
+        using (FileStream fs = new FileStream(inputFile, FileMode.Open))
+        using (BinaryReader reader = new BinaryReader(fs))
+        using (FileStream outputFs = new FileStream(outputFile, FileMode.Create))
+        using (BinaryWriter writer = new BinaryWriter(outputFs))
         {
-            public bool Equals(List<byte> x, List<byte> y)
+            int codeCount = reader.ReadInt32();
+
+            // Initialize dictionary
+            Dictionary<int, List<byte>> dictionary = new Dictionary<int, List<byte>>();
+            for (int i = 0; i < 256; i++)
             {
-                if (x == null || y == null) return false;
-                if (x.Count != y.Count) return false;
-                for (int i = 0; i < x.Count; i++)
-                {
-                    if (x[i] != y[i]) return false;
-                }
-                return true;
+                dictionary[i] = new List<byte> { (byte)i };
             }
 
-            public int GetHashCode(List<byte> obj)
+            List<ushort> compressedCodes = new List<ushort>();
+            for (int i = 0; i < codeCount; i++)
             {
-                int hash = 17;
-                foreach (byte b in obj)
-                {
-                    hash = hash * 31 + b;
-                }
-                return hash;
+                compressedCodes.Add(reader.ReadUInt16());
             }
+
+            int nextCode = 256;
+            List<byte> previous = dictionary[compressedCodes[0]];
+            writer.Write(previous.ToArray());
+
+            for (int i = 1; i < compressedCodes.Count; i++)
+            {
+                ushort code = compressedCodes[i];
+                List<byte> current;
+
+                if (dictionary.ContainsKey(code))
+                {
+                    current = dictionary[code];
+                }
+                else if (code == nextCode)
+                {
+                    // Special case: code not in dictionary yet
+                    current = [.. previous, previous[0]];
+                }
+                else
+                {
+                    throw new InvalidDataException($"Invalid LZW code: {code}");
+                }
+
+                // Write decompressed data
+                writer.Write(current.ToArray());
+
+                // Add new entry to dictionary
+                if (nextCode < MAX_DICT_SIZE)
+                {
+                    List<byte> newEntry = new List<byte>(previous);
+                    newEntry.Add(current[0]);
+                    dictionary[nextCode] = newEntry;
+                    nextCode++;
+                }
+
+                previous = current;
+            }
+        }
+    }
+
+    private class ByteListComparer : IEqualityComparer<List<byte>>
+    {
+        public bool Equals(List<byte> x, List<byte> y)
+        {
+            if (x == null || y == null) return false;
+            if (x.Count != y.Count) return false;
+            for (int i = 0; i < x.Count; i++)
+            {
+                if (x[i] != y[i]) return false;
+            }
+            return true;
+        }
+
+        public int GetHashCode(List<byte> obj)
+        {
+            int hash = 17;
+            foreach (byte b in obj)
+            {
+                hash = hash * 31 + b;
+            }
+            return hash;
         }
     }
 }

@@ -58,7 +58,7 @@ namespace FileCompressionApp
 
         private void btnDecompression_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtFilePath.Text) || !File.Exists(txtFilePath.Text) 
+            if (string.IsNullOrEmpty(txtFilePath.Text) || !File.Exists(txtFilePath.Text)
                 || Path.GetExtension(txtFilePath.Text) != ".ac")
             {
                 MessageBox.Show("Please select a valid file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -100,8 +100,7 @@ namespace FileCompressionApp
                 string inputFile = txtFilePath.Text;
                 string outputFile = inputFile + ".lzw";
 
-                LZWCompressor compressor = new LZWCompressor();
-                compressor.Compress(inputFile, outputFile);
+                LZWCompressor.Compress(inputFile, outputFile);
 
                 FileInfo originalFile = new FileInfo(inputFile);
                 FileInfo compressedFile = new FileInfo(outputFile);
@@ -117,6 +116,37 @@ namespace FileCompressionApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Error during LZW compression: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnDecompressLZW_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtFilePath.Text) || !File.Exists(txtFilePath.Text)
+                || Path.GetExtension(txtFilePath.Text) != ".lzw")
+            {
+                MessageBox.Show("Please select a valid file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                string inputFile = txtFilePath.Text;
+                string outputFile = inputFile[..^3];
+
+                LZWCompressor.Decompress(inputFile, outputFile);
+
+                FileInfo originalFile = new FileInfo(inputFile);
+                FileInfo compressedFile = new FileInfo(outputFile);
+
+                double compressionRatio = (1 - (double)compressedFile.Length / originalFile.Length) * 100;
+
+                MessageBox.Show($"LZW decompression completed!",
+                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error during LZW decompression: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

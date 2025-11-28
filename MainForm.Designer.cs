@@ -24,6 +24,7 @@
             btnDoubleCompress = new Button();
             label1 = new Label();
             btnDecompressArithmetic = new Button();
+            btnDecompressLZW = new Button();
             SuspendLayout();
             // 
             // txtFilePath
@@ -96,15 +97,26 @@
             btnDecompressArithmetic.Name = "btnDecompressArithmetic";
             btnDecompressArithmetic.Size = new Size(163, 40);
             btnDecompressArithmetic.TabIndex = 6;
-            btnDecompressArithmetic.Text = "Arithmetic Decompression";
+            btnDecompressArithmetic.Text = "Arithemtic Decompression";
             btnDecompressArithmetic.UseVisualStyleBackColor = true;
-            btnDecompressArithmetic.Click += this.btnDecompression_Click;
+            btnDecompressArithmetic.Click += btnDecompression_Click;
+            // 
+            // btnDecompressLZW
+            // 
+            btnDecompressLZW.Location = new Point(184, 149);
+            btnDecompressLZW.Name = "btnDecompressLZW";
+            btnDecompressLZW.Size = new Size(163, 40);
+            btnDecompressLZW.TabIndex = 7;
+            btnDecompressLZW.Text = "LZW Decompression";
+            btnDecompressLZW.UseVisualStyleBackColor = true;
+            btnDecompressLZW.Click += btnDecompressLZW_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(542, 201);
+            Controls.Add(btnDecompressLZW);
             Controls.Add(btnDecompressArithmetic);
             Controls.Add(label1);
             Controls.Add(btnDoubleCompress);
@@ -131,5 +143,6 @@
         private System.Windows.Forms.Button btnDoubleCompress;
         private System.Windows.Forms.Label label1;
         private Button btnDecompressArithmetic;
+        private Button btnDecompressLZW;
     }
 }
