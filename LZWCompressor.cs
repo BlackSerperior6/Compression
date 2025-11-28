@@ -34,7 +34,7 @@ public static class LZWCompressor
                 {
                     output.Add(dictionary[current]);
 
-                    if (nextCode < 4096)
+                    if (nextCode < MAX_DICT_SIZE)
                         dictionary[extended] = nextCode++;
 
                     current = new List<byte> { b };
@@ -42,9 +42,7 @@ public static class LZWCompressor
             }
 
             if (current.Count > 0)
-            {
                 output.Add(dictionary[current]);
-            }
 
             writer.Write(output.Count);
             foreach (int code in output)
@@ -65,9 +63,7 @@ public static class LZWCompressor
 
             Dictionary<int, List<byte>> dictionary = new Dictionary<int, List<byte>>();
             for (int i = 0; i < 256; i++)
-            {
                 dictionary[i] = new List<byte> { (byte)i };
-            }
 
             List<ushort> compressedCodes = new List<ushort>();
             for (int i = 0; i < codeCount; i++)
